@@ -1,10 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  nationality: string;
+  image: string;
+  description: string;
+  bio: string;
+}
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [selectedTeamMember, setSelectedTeamMember] = useState<TeamMember | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +33,83 @@ export default function Home() {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
+  };
+
+  const teamMembers: TeamMember[] = [
+    {
+      id: 'jackson',
+      name: 'Jackson, David',
+      role: 'Project Manager',
+      nationality: 'Ghana',
+      image: '/team/jackson.jpg',
+      description: 'Experienced project manager with expertise in leading cross-functional teams and delivering complex business solutions.',
+      bio: 'David brings over 8 years of project management experience, specializing in strategic planning and team leadership. He has successfully delivered numerous high-impact projects across various industries, ensuring on-time delivery and stakeholder satisfaction.'
+    },
+    {
+      id: 'patience',
+      name: 'Adefehinti, Patience',
+      role: 'Team Lead',
+      nationality: 'Nigeria',
+      image: '/team/pato.jpg',
+      description: 'Dynamic team leader with strong analytical skills and a proven track record of driving team performance and project success.',
+      bio: 'Patience excels in team leadership and strategic planning, with expertise in process optimization and stakeholder management. She has led diverse teams to achieve exceptional results in challenging business environments.'
+    },
+    {
+      id: 'phu',
+      name: 'Vinh, Phu',
+      role: 'Assistant Project Manager',
+      nationality: 'Vietnam',
+      image: '/team/phu.jpg',
+      description: 'Detail-oriented assistant project manager with strong organizational skills and technical expertise.',
+      bio: 'Phu specializes in project coordination and technical implementation, bringing valuable insights from his background in technology and business process management.'
+    },
+    {
+      id: 'dolapo',
+      name: 'Adegoke, Oluwadolapo',
+      role: 'Business Analyst',
+      nationality: 'Nigeria',
+      image: '/team/dolapo.jpg',
+      description: 'Analytical business analyst with expertise in data-driven decision making and process improvement.',
+      bio: 'Oluwadolapo combines strong analytical skills with business acumen to identify opportunities for improvement and drive strategic initiatives.'
+    },
+    {
+      id: 'pam',
+      name: 'Parminder, Kaur',
+      role: 'Business Analyst',
+      nationality: 'India',
+      image: '/team/pato.jpg', // Using pato image as placeholder since pam image is missing
+      description: 'Skilled business analyst with expertise in requirements gathering and solution design.',
+      bio: 'Parminder brings extensive experience in business analysis, specializing in stakeholder engagement and solution architecture.'
+    },
+    {
+      id: 'michael',
+      name: 'Uduokhai, Michael',
+      role: 'Business Analyst',
+      nationality: 'Nigeria',
+      image: '/team/mich.jpg',
+      description: 'Results-driven business analyst with strong problem-solving skills and technical expertise.',
+      bio: 'Michael excels in translating business requirements into technical solutions, with a focus on efficiency and innovation.'
+    }
+  ];
+
+  const getNationalityFlag = (nationality: string) => {
+    switch (nationality) {
+      case 'Ghana': return '🇬🇭';
+      case 'Nigeria': return '🇳🇬';
+      case 'Vietnam': return '🇻🇳';
+      case 'India': return '🇮🇳';
+      default: return '🌍';
+    }
+  };
+
+  const openTeamModal = (member: TeamMember) => {
+    setSelectedTeamMember(member);
+    setIsModalOpen(true);
+  };
+
+  const closeTeamModal = () => {
+    setIsModalOpen(false);
+    setSelectedTeamMember(null);
   };
 
   return (
@@ -175,7 +265,7 @@ export default function Home() {
                 Founded with a vision to transform businesses through strategic innovation, PMD Consulting has been at the forefront of organizational excellence for over a decade.
               </p>
               <p className="text-lg text-gray-600 mb-8">
-                Our team of seasoned consultants brings together decades of experience across industries, delivering measurable results that drive sustainable growth and competitive advantage.
+                Our diverse team of seasoned consultants brings together decades of experience across industries, delivering measurable results that drive sustainable growth and competitive advantage.
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
@@ -212,41 +302,82 @@ export default function Home() {
               Meet Our <span style={{ color: 'var(--pmd-orange)' }}>Team</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Experienced professionals dedicated to delivering exceptional results for your business.
+              Experienced professionals from around the world, dedicated to delivering exceptional results for your business.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Sarah Johnson",
-                role: "Managing Partner",
-                bio: "20+ years of strategic consulting experience across Fortune 500 companies.",
-                avatar: "👩‍💼"
-              },
-              {
-                name: "Michael Chen",
-                role: "Senior Consultant",
-                bio: "Expert in digital transformation and technology strategy implementation.",
-                avatar: "👨‍💻"
-              },
-              {
-                name: "Emily Rodriguez",
-                role: "Operations Specialist",
-                bio: "Specialized in process optimization and organizational development.",
-                avatar: "👩‍🔧"
-              }
-            ].map((member, index) => (
-              <div key={index} className="service-card bg-white p-8 rounded-xl shadow-lg border border-gray-100 text-center">
-                <div className="text-6xl mb-4">{member.avatar}</div>
+            {teamMembers.map((member, index) => (
+              <div 
+                key={index} 
+                className="service-card bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center cursor-pointer transform transition-all duration-300 hover:scale-105"
+                onClick={() => openTeamModal(member)}
+              >
+                <div className="relative w-32 h-32 mx-auto mb-4">
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    fill
+                    className="rounded-full object-cover"
+                  />
+                </div>
                 <h3 className="text-xl font-bold text-black mb-2">{member.name}</h3>
-                <p className="text-orange-500 font-semibold mb-4">{member.role}</p>
-                <p className="text-gray-600">{member.bio}</p>
+                <p className="text-orange-500 font-semibold mb-2">{member.role}</p>
+                                 <p className="text-gray-500 text-sm mb-3">{getNationalityFlag(member.nationality)} {member.nationality}</p>
+                <p className="text-gray-600 text-sm">{member.description}</p>
+                <div className="mt-4 text-orange-500 text-sm font-medium">
+                  Click to learn more →
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Team Member Modal */}
+      {isModalOpen && selectedTeamMember && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-8">
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-3xl font-bold text-black">{selectedTeamMember.name}</h2>
+                <button
+                  onClick={closeTeamModal}
+                  className="text-gray-500 hover:text-black text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="flex flex-col md:flex-row gap-6 mb-6">
+                <div className="relative w-48 h-48 mx-auto md:mx-0">
+                  <Image
+                    src={selectedTeamMember.image}
+                    alt={selectedTeamMember.name}
+                    fill
+                    className="rounded-xl object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="bg-orange-50 p-4 rounded-lg mb-4">
+                    <h3 className="text-xl font-bold text-orange-600 mb-2">{selectedTeamMember.role}</h3>
+                    <p className="text-gray-700">{selectedTeamMember.bio}</p>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <span className="text-lg mr-2">🌍</span>
+                    <span className="font-medium">From {selectedTeamMember.nationality}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border-t pt-6">
+                <h4 className="text-lg font-bold text-black mb-3">Key Expertise</h4>
+                <p className="text-gray-600">{selectedTeamMember.description}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Testimonials Section */}
       <section className="py-20 bg-gray-50">
